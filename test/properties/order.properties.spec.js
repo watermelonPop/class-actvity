@@ -66,7 +66,7 @@ describe('Property-Based Tests for Orders', () => {
       );
     });
 
-    it('tax should be non-negative and proportional to subtotal - discounts', () => {
+    it('tax should be non-negative', () => {
       fc.assert(
         fc.property(orderArb, contextArb, (order, ctx) => {
           const sub = subtotal(order);
@@ -79,7 +79,7 @@ describe('Property-Based Tests for Orders', () => {
       );
     });
 
-    it('total should equal subtotal - discounts + tax + delivery', () => {
+    it('total should be subtotal minus discounts with tax and delivery', () => {
       fc.assert(
         fc.property(orderArb, contextArb, (order, ctx) => {
           const sub = subtotal(order);
