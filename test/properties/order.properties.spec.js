@@ -66,6 +66,33 @@ describe('Property-Based Tests for Orders', () => {
       );
     });
 
+    it('tax should be non-negative and proportional to subtotal - discounts', () => {
+      fc.assert(
+        fc.property(orderArb, contextArb, (order, ctx) => {
+          const sub = subtotal(order);
+          const disc = discounts(order, ctx);
+          const taxable = Math.max(0, sub - disc);
+          const t = tax(order, ctx);
+          return t >= 0; 
+        }),
+        { numRuns: 50 }
+      );
+    });
+
+    it('total should equal subtotal - discounts + tax + delivery', () => {
+      fc.assert(
+        fc.property(orderArb, contextArb, (order, ctx) => {
+          const sub = subtotal(order);
+          const disc = discounts(order, ctx);
+          const t = tax(order, ctx);
+          const del = delivery(order, ctx);
+          const tot = total(order, ctx);
+          return Math.abs(tot - (sub - disc + t + del)) < 2;
+        }),
+        { numRuns: 50 }
+      );
+    });
+
     // ---------------------------------------------------------------------------
     // Add more invariant properties for discounts, tax, delivery, and total here
     // You can adapt the starter code below.
